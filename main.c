@@ -2,8 +2,22 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <windows.h>
 
-double medirTempo(void (*algoritmo)(int[], int), int arr[], int n)
+void exibirResultado(long int arr[], long int qtdNumeros);
+long double medirTempo(void (*algoritmo)(long int[], long int), long int arr[], long int n);
+void bubbleSort(long int arr[], long int n);
+void insertionSort(long int arr[], long int n);
+void selectionSort(long int arr[], long int n);
+FILE *pegarDadosArquivo();
+void ordenarDadosArquivo();
+void ordenarDadosAleatorios();
+void ordenarDadosDigitados();
+void pegarOpcaoMenu();
+void exibirOpcoesMenu();
+void exibirResultado(long int arr[], long int qtdNumeros);
+
+long double medirTempo(void (*algoritmo)(long int[], long int), long int arr[], long int n)
 {
   clock_t inicio, fim;
   long double tempo;
@@ -16,9 +30,9 @@ double medirTempo(void (*algoritmo)(int[], int), int arr[], int n)
   return tempo;
 }
 
-void bubbleSort(int arr[], int n)
+void bubbleSort(long int arr[], long int n)
 {
-  int i, j, temp;
+  long int i, j, temp;
 
   for (i = 0; i < n - 1; i++)
   {
@@ -35,12 +49,12 @@ void bubbleSort(int arr[], int n)
   }
 }
 
-void insertionSort(int arr[], int n)
+void insertionSort(long int arr[], long int n)
 {
-  for (int i = 1; i < n; i++)
+  for (long int i = 1; i < n; i++)
   {
-    int key = arr[i];
-    int j = i - 1;
+    long int key = arr[i];
+    long int j = i - 1;
     while (j >= 0 && arr[j] > key)
     {
       arr[j + 1] = arr[j];
@@ -50,9 +64,9 @@ void insertionSort(int arr[], int n)
   }
 }
 
-void selectionSort(int arr[], int n)
+void selectionSort(long int arr[], long int n)
 {
-  int i, j, minIndex, temp;
+  long int i, j, minIndex, temp;
 
   for (i = 0; i < n - 1; i++)
   {
@@ -84,8 +98,8 @@ FILE *pegarDadosArquivo()
 void ordenarDadosArquivo()
 {
   FILE *file = pegarDadosArquivo();
-  int numero;
-  int qtdNumerosArquivo = 0;
+  long int numero;
+  long int qtdNumerosArquivo = 0;
 
   while (file == NULL)
   {
@@ -93,68 +107,153 @@ void ordenarDadosArquivo()
     file = pegarDadosArquivo();
   }
 
-  while (fscanf(file, "%d", &numero) == 1)
+  while (fscanf(file, "%ld", &numero) == 1)
   {
     qtdNumerosArquivo++;
   }
 
-  int arrToBubble[qtdNumerosArquivo], arrToInsertion[qtdNumerosArquivo], arrToSelection[qtdNumerosArquivo];
+  long int arr[qtdNumerosArquivo];
 
   rewind(file);
 
-  printf("\nDados a serem ordenados: \n");
-
-  int n = 0;
-  while (fscanf(file, "%d", &arrToBubble[n]) == 1 && n < qtdNumerosArquivo)
+  long int n = 0;
+  while (fscanf(file, "%ld", &arr[n]) == 1 && n < qtdNumerosArquivo)
   {
-    arrToInsertion[n] = arrToBubble[n];
-    arrToSelection[n] = arrToBubble[n];
-    printf("%d ", arrToBubble[n]);
     n++;
   }
 
   fclose(file);
 
-  double tempoBubble = medirTempo(bubbleSort, arrToBubble, qtdNumerosArquivo);
-  double tempoInsertion = medirTempo(insertionSort, arrToInsertion, qtdNumerosArquivo);
-  double tempoSelection = medirTempo(selectionSort, arrToSelection, qtdNumerosArquivo);
-
-  printf("\n");
-  printf("\nDados ordenados:\n");
-  for (int i = 0; i < qtdNumerosArquivo; i++)
-  {
-    printf("%d ", arrToBubble[i]);
-  }
-
-  printf("\n");
-  printf("\nTempo gasto no Bubble Sort: %f segundos\n", tempoBubble);
-  printf("Tempo gasto no Insertion Sort: %f segundos\n", tempoInsertion);
-  printf("Tempo gasto no Selection Sort: %f segundos\n", tempoSelection);
-
-  printf("\n%d", arrToBubble[qtdNumerosArquivo - 1]);
-  printf("\n%d", arrToInsertion[qtdNumerosArquivo - 1]);
-  printf("\n%d", arrToSelection[qtdNumerosArquivo - 1]);
+  exibirResultado(arr, qtdNumerosArquivo);
 }
 
-int main()
+void ordenarDadosAleatorios()
+{
+  long int qtdDados;
+
+  srand(time(NULL));
+
+  printf("\nDeseja que o sistema gere e ordene quantos dados? ");
+  scanf("%ld", &qtdDados);
+
+  long int arr[qtdDados], i;
+
+  for (i = 0; i < qtdDados; i++)
+  {
+    arr[i] = rand();
+  }
+
+  exibirResultado(arr, qtdDados);
+}
+
+void ordenarDadosDigitados()
+{
+  long int qtdDados, i;
+
+  printf("\nDeseja digitar quantos dados? ");
+  scanf("%ld", &qtdDados);
+  printf("\n");
+
+  long int arr[qtdDados];
+
+  for (i = 0; i < qtdDados; i++)
+  {
+    printf("Digite o %ldº dado: ", i + 1);
+    scanf("%ld", &arr[i]);
+  }
+
+  exibirResultado(arr, qtdDados);
+}
+
+void pegarOpcaoMenu()
 {
   int opcao;
 
-  printf("\nSistema de ordenacao de dados");
   printf("\n");
-  printf("\nOpcoes para geracao ou obtencao de dados:");
-  printf("\n1 - Digitar caminho do arquivo com os dados");
-  printf("\n2 - Permitir que o sistema gere e ordene dados aleatorios");
-  printf("\n3 - Digitar dados");
-  printf("\n");
-  printf("\nInsira o numero de uma das opcoes: ");
+  printf("\nInsira o número de uma das opções: ");
 
   scanf("%d", &opcao);
+
+  int c;
+  while ((c = getchar()) != '\n' && c != EOF)
+  {
+  }
 
   if (opcao == 1)
   {
     ordenarDadosArquivo();
   }
+  else if (opcao == 2)
+  {
+    ordenarDadosAleatorios();
+  }
+  else if (opcao == 3)
+  {
+    ordenarDadosDigitados();
+  }
+  else if (opcao == 0)
+  {
+    exit(0);
+  }
+  else
+  {
+    printf("Opção inválida!");
+    pegarOpcaoMenu();
+  }
+}
+
+void exibirOpcoesMenu()
+{
+  printf("\n");
+  printf("\nOpções:");
+  printf("\n1 - Digitar caminho do arquivo com os dados");
+  printf("\n2 - Permitir que o sistema gere e ordene dados aleatórios");
+  printf("\n3 - Digitar dados");
+  printf("\n0 - Sair");
+
+  pegarOpcaoMenu();
+}
+
+void exibirResultado(long int arr[], long int qtdNumeros)
+{
+  long int arrToBubble[qtdNumeros], arrToInsertion[qtdNumeros], arrToSelection[qtdNumeros], i;
+
+  printf("\nDados gerados a serem ordenados:\n");
+
+  for (i = 0; i < qtdNumeros; i++)
+  {
+    arrToBubble[i] = arr[i];
+    arrToInsertion[i] = arr[i];
+    arrToSelection[i] = arr[i];
+    printf("%ld ", arrToBubble[i]);
+  }
+
+  double tempoBubble = medirTempo(bubbleSort, arrToBubble, qtdNumeros);
+  double tempoInsertion = medirTempo(insertionSort, arrToInsertion, qtdNumeros);
+  double tempoSelection = medirTempo(selectionSort, arrToSelection, qtdNumeros);
+
+  printf("\n");
+  printf("\nDados ordenados:\n");
+  for (int i = 0; i < qtdNumeros; i++)
+  {
+    printf("%ld ", arrToBubble[i]);
+  }
+
+  printf("\n");
+  printf("\nTempo gasto pelo Bubble Sort: %f segundos\n", tempoBubble);
+  printf("Tempo gasto pelo Insertion Sort: %f segundos\n", tempoInsertion);
+  printf("Tempo gasto pelo Selection Sort: %f segundos", tempoSelection);
+
+  exibirOpcoesMenu();
+}
+
+int main()
+{
+  SetConsoleOutputCP(CP_UTF8);
+
+  printf("\nSistema de ordenação de dados");
+
+  exibirOpcoesMenu();
 
   return 0;
 }
