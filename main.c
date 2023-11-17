@@ -40,7 +40,6 @@ void bubbleSort(long int arr[], long int n)
     {
       if (arr[j] > arr[j + 1])
       {
-        // Troca os elementos se estiverem fora de ordem
         temp = arr[j];
         arr[j] = arr[j + 1];
         arr[j + 1] = temp;
@@ -51,15 +50,19 @@ void bubbleSort(long int arr[], long int n)
 
 void insertionSort(long int arr[], long int n)
 {
-  for (long int i = 1; i < n; i++)
+  long int i;
+
+  for (i = 1; i < n; i++)
   {
     long int key = arr[i];
     long int j = i - 1;
+
     while (j >= 0 && arr[j] > key)
     {
       arr[j + 1] = arr[j];
       j--;
     }
+
     arr[j + 1] = key;
   }
 }
